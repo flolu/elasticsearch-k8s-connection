@@ -1,0 +1,42 @@
+version: "3"
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.8.0
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    logging:
+      driver: none
+
+  search:
+    container_name: search
+    image: node:lts-alpine
+    working_dir: /
+    volumes:
+      - ./package.json:/package.json
+      - ./tsconfig.json:/tsconfig.json
+      - ./search:/search
+      - ./node_modules:/node_modules
+    env_file: dev.env
+    command: yarn run ts-node-dev search --colors
+    ports:
+      - 3333:3333
+
+volumes:
+  elasticsearch-data:
+    driver: local
