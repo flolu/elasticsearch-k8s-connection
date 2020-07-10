@@ -1,5 +1,5 @@
 workspace(
-    name = "elasticsearch_k8s",
+    name = "elasticsearch",
     managed_directories = {"@npm": ["node_modules"]},
 )
 
@@ -47,6 +47,22 @@ load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
 
 ts_setup_workspace()
 
+# https://github.com/bazelbuild/rules_sass#setup
+http_archive(
+    name = "io_bazel_rules_sass",
+    sha256 = "9dcfba04e4af896626f4760d866f895ea4291bc30bf7287887cefcf4707b6a62",
+    strip_prefix = "rules_sass-1.26.3",
+    url = "https://github.com/bazelbuild/rules_sass/archive/1.26.3.zip",
+)
+
+load("@io_bazel_rules_sass//:package.bzl", "rules_sass_dependencies")
+
+rules_sass_dependencies()
+
+load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
+
+sass_repositories()
+
 # https://github.com/bazelbuild/rules_docker#setup
 http_archive(
     name = "io_bazel_rules_docker",
@@ -80,7 +96,7 @@ load("@io_bazel_rules_k8s//k8s:k8s_go_deps.bzl", k8s_go_deps = "deps")
 k8s_go_deps()
 
 k8s_defaults(
-    name = "microk8s_deploy",
+    name = "k8s_deploy",
     cluster = "microk8s-cluster",
     image_chroot = "localhost:32000",
     kind = "deployment",

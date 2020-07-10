@@ -54,3 +54,14 @@ server.use((err: Error, req: express.Request, res: express.Response) => {
 });
 
 server.listen(3333);
+
+async function boot() {
+  try {
+    const result = await client.cluster.health();
+    console.log("cluster health", result);
+  } catch (error) {
+    console.log("error while fetching cluster health: ", error);
+  }
+}
+
+boot();
