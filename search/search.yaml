@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: elasticsearch_node
-              value: http://elasticsearch-es-http.default.svc.cluster.local:9200
+              value: https://elasticsearch-es-http.default.svc.cluster.local:9200
           readinessProbe:
             httpGet:
               path: /

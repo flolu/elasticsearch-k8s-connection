@@ -1,5 +1,5 @@
 workspace(
-    name = "elasticsearch",
+    name = "elasticsearch_k8s_connection",
     managed_directories = {"@npm": ["node_modules"]},
 )
 
@@ -24,44 +24,9 @@ load("@npm//:install_bazel_dependencies.bzl", "install_bazel_dependencies")
 
 install_bazel_dependencies()
 
-load("@npm_bazel_protractor//:package.bzl", "npm_bazel_protractor_dependencies")
-
-npm_bazel_protractor_dependencies()
-
-load("@npm_bazel_karma//:package.bzl", "npm_bazel_karma_dependencies")
-
-npm_bazel_karma_dependencies()
-
-load("@io_bazel_rules_webtesting//web:repositories.bzl", "web_test_repositories")
-
-web_test_repositories()
-
-load("@io_bazel_rules_webtesting//web/versioned:browsers-0.3.2.bzl", "browser_repositories")
-
-browser_repositories(
-    chromium = True,
-    firefox = True,
-)
-
 load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
 
 ts_setup_workspace()
-
-# https://github.com/bazelbuild/rules_sass#setup
-http_archive(
-    name = "io_bazel_rules_sass",
-    sha256 = "9dcfba04e4af896626f4760d866f895ea4291bc30bf7287887cefcf4707b6a62",
-    strip_prefix = "rules_sass-1.26.3",
-    url = "https://github.com/bazelbuild/rules_sass/archive/1.26.3.zip",
-)
-
-load("@io_bazel_rules_sass//:package.bzl", "rules_sass_dependencies")
-
-rules_sass_dependencies()
-
-load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
-
-sass_repositories()
 
 # https://github.com/bazelbuild/rules_docker#setup
 http_archive(
@@ -98,6 +63,8 @@ k8s_go_deps()
 k8s_defaults(
     name = "k8s_deploy",
     cluster = "microk8s-cluster",
+    # localhost:32000 is the local docker container registry of microk8s
+    # more details here: https://microk8s.io/docs/registry-built-in
     image_chroot = "localhost:32000",
     kind = "deployment",
 )

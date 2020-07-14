@@ -8,40 +8,52 @@ const index = "test-index";
 
 const server = express();
 
-server.get("/insert/:input", async (req, res) => {
-  const { input } = req.params;
-  console.log("index ", input);
-  await client.index({
-    index,
-    body: { name: input, insertedAt: new Date().toISOString() },
-  });
-  res.send(`${input} has been indexed by elasticsearch`);
+server.get("/insert/:input", async (req, res, next) => {
+  try {
+    const { input } = req.params;
+    console.log("index ", input);
+    await client.index({
+      index,
+      body: { name: input, insertedAt: new Date().toISOString() },
+    });
+    res.send(`${input} has been indexed by elasticsearch`);
+  } catch (err) {
+    next(err);
+  }
 });
 
-server.get("/search/:input", async (req, res) => {
-  const { input } = req.params;
-  console.log("search for ", input);
-  const { body } = await client.search({
-    index,
-    body: {
-      query: {
-        match: {
-          name: {
-            query: input,
-            operator: "and",
-            fuzziness: "auto",
+server.get("/search/:input", async (req, res, next) => {
+  try {
+    const { input } = req.params;
+    console.log("search for ", input);
+    const { body } = await client.search({
+      index,
+      body: {
+        query: {
+          match: {
+            name: {
+              query: input,
+              operator: "and",
+              fuzziness: "auto",
+            },
           },
         },
       },
-    },
-  });
+    });
 
-  res.json(body.hits.hits);
+    res.json(body.hits.hits);
+  } catch (err) {
+    next(err);
+  }
 });
 
-server.get("/index", async (req, res) => {
-  const { body } = await client.search({ index });
-  res.json(body);
+server.get("/index", async (req, res, next) => {
+  try {
+    const { body } = await client.search({ index });
+    res.json(body);
+  } catch (err) {
+    next(err);
+  }
 });
 
 server.get("**", (_req, res) =>
@@ -53,14 +65,13 @@ server.use((err: Error, req: express.Request, res: express.Response) => {
   res.status(500).send("Something broke: " + err.message);
 });
 
-server.listen(3333);
-
 async function boot() {
   try {
+    server.listen(3333);
     const result = await client.cluster.health();
     console.log("cluster health", result);
   } catch (error) {
-    console.log("error while fetching cluster health: ", error);
+    console.log("error: ", error);
   }
 }
 

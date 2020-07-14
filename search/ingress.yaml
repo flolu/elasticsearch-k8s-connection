@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: centsideas-ingress
+  name: search-ingress
   annotations:
     kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: "nginx"
@@ -10,17 +10,10 @@ spec:
   tls:
     - hosts:
         - localhost
-        - serach.localhost
   rules:
-    - host: search.localhost
-      http:
-        paths:
-          - backend:
-              serviceName: search
-              servicePort: 3333
     - host: localhost
       http:
         paths:
           - backend:
-              serviceName: search
+              serviceName: search-service
               servicePort: 3333
