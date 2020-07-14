@@ -1,4 +1,10 @@
-# The problem has been [fixed](https://stackoverflow.com/a/62890003/8586803). Thus the code of this repo work fine now.
+## The problem has been [fixed](https://stackoverflow.com/a/62890003/8586803). Thus the code of this repo works fine now.
+
+---
+
+---
+
+---
 
 > Elasticsearch works fine with Docker compose, but I can't connect to Elasticsearch from inside my Kubernetes cluster
 
