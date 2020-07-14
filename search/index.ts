@@ -2,9 +2,19 @@ import * as express from "express";
 import * as elasticsearch from "@elastic/elasticsearch";
 
 console.log("connect to node", process.env.elasticsearch_node);
+console.log("with certificate", process.env.elasticsearch_certificate);
+console.log("and password", process.env.elasticsearch_password);
 
 const client = new elasticsearch.Client({
   node: process.env.elasticsearch_node,
+  auth: {
+    username: "elastic",
+    password: process.env.elasticsearch_password || "changeme",
+  },
+  ssl: {
+    ca: process.env.elasticsearch_certificate,
+    rejectUnauthorized: false,
+  },
 });
 const index = "test-index";
 

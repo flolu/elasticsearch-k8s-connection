@@ -19,6 +19,16 @@ spec:
           env:
             - name: elasticsearch_node
               value: https://elasticsearch-es-http.default.svc.cluster.local:9200
+            - name: elasticsearch_certificate
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-es-http-ca-internal
+                  key: tls.crt
+            - name: elasticsearch_password
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-es-elastic-user
+                  key: elastic
           readinessProbe:
             httpGet:
               path: /
