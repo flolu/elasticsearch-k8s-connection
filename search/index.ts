@@ -1,6 +1,8 @@
 import * as express from "express";
 import * as elasticsearch from "@elastic/elasticsearch";
 
+console.log("connect to node", process.env.elasticsearch_node);
+
 const client = new elasticsearch.Client({
   node: process.env.elasticsearch_node,
 });
@@ -56,8 +58,17 @@ server.get("/index", async (req, res, next) => {
   }
 });
 
+server.get("/health", async (req, res, next) => {
+  try {
+    const result = await client.cluster.health();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
 server.get("**", (_req, res) =>
-  res.send("only routes </insert/:input> and </search/:input> are available")
+  res.send("only routes '/insert/:input' and '/search/:input' are available")
 );
 
 server.use((err: Error, req: express.Request, res: express.Response) => {
@@ -65,14 +76,4 @@ server.use((err: Error, req: express.Request, res: express.Response) => {
   res.status(500).send("Something broke: " + err.message);
 });
 
-async function boot() {
-  try {
-    server.listen(3333);
-    const result = await client.cluster.health();
-    console.log("cluster health", result);
-  } catch (error) {
-    console.log("error: ", error);
-  }
-}
-
-boot();
+server.listen(3333);

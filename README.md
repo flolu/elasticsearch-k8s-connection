@@ -33,12 +33,14 @@ kubectl logs deployment/search-deployment
 Unfortunately, there is an error:
 
 ```
-ConnectionError: socket hang up
+ConnectionError: self signed certificate in certificate chain
 ```
 
-This only happens when running Elasticsearch inside Kubernetes. Running it with Docker compose (`yarn docker`) works fine.
+This only happens when running Elasticsearch inside Kubernetes. Running it with Docker compose (`yarn docker`) works fine. (_probably because security is disabled in the docker compose file_)
 
 # Misc
+
+GitHub Issue: https://github.com/elastic/elasticsearch-js/issues/1255
 
 StackOverflow post: https://stackoverflow.com/questions/62792477
 
